@@ -1,0 +1,71 @@
+---
+title: "Average Farm Size by Country"
+author: "David Jackson"
+date: "9/5/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(scales)
+library(flextable)
+library(dlookr)
+```
+
+## Our World In Data: Average Farm Size
+
+* Source: https://ourworldindata.org/farm-size#average-farm-size-by-country
+
+```{r}
+farm_size <- read_csv("./average-farm-size.csv") %>% select(-Code) %>% rename(Country = Entity)
+```
+## Descriptive Stats Using dlookr
+
+```{r}
+farm_size %>% select(average_farm_size_ha) %>% dlookr::diagnose_numeric() %>% flextable()
+```
+
+## Begin Fun Stuff
+### Less than One Hectare Arces for 2000
+
+```{r}
+farm_size %>% filter(average_farm_size_ha <=1 & Year ==2000) %>%
+  
+  ggplot() +
+  geom_col(aes(x=average_farm_size_ha,y=Country)) +
+  labs(title = "Countries with Farm Size Under 1 HA (2000)",
+       x="Hectare Arces",y="Countries")
+
+```
+
+### Less than >1 and <=5 Hectare Arces for 2000
+
+```{r}
+farm_size %>% filter((average_farm_size_ha >1 & average_farm_size_ha <=5) & Year ==2000) %>%
+  
+  ggplot() +
+  geom_col(aes(x=reorder(Country,average_farm_size_ha),y=average_farm_size_ha)) +
+  labs(title = "Countries with Farm Size > 1 & <= 5 HA (2000)",
+       y="Hectare Arces",x="Countries") + coord_flip()
+```
+
+### Less than >5 and <=10 Hectare Arces for 2000
+
+```{r}
+farm_size %>% filter((average_farm_size_ha >5 & average_farm_size_ha <=10) & Year ==2000) %>%
+  
+  ggplot() +
+  geom_col(aes(x=reorder(Country,average_farm_size_ha),y=average_farm_size_ha)) +
+  labs(title = "Countries with Farm Size > 5 & <= 10 HA (2000)",
+       y="Hectare Arces",x="Countries") + coord_flip()
+```
+
+### Histogram of Farm Sizes In Hectare Arces
+
+```{r}
+farm_size %>% ggplot() + geom_histogram(aes(x=average_farm_size_ha)) +
+  scale_x_log10() + labs(title = "Histogram by Farm Size in Hectare Arces",
+                         x="Hectare Arces (log10)",y="Number of Farms")
+```
+
