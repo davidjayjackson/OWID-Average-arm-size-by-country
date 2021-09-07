@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE,message = FALSE)
 library(tidyverse)
 library(scales)
 library(flextable)
@@ -16,6 +16,16 @@ library(dlookr)
 ## Our World In Data: Average Farm Size
 
 * Source: https://ourworldindata.org/farm-size#average-farm-size-by-country
+
+
+## Imtroduction
+
+"Smallholders produce one-third of the world’s food, less than half of what many headlines claim"
+ It is often claimed that smallholder farmers produce 70% or even 80% of the world’s food. This claim has even been made by the United Nations Food and Agriculture Organization (UN FAO).
+
+"It has been a linchpin for agricultural and development policies. But it is wrong. Recent studies suggest that this figure is too high: smallholder farmers produce around one-third of the world’s food, less than half of what these headlines claim."
+(Source: http://ourworldindata.org)
+
 
 ```{r}
 farm_size <- read_csv("./average-farm-size.csv") %>% select(-Code) %>% rename(Country = Entity)
