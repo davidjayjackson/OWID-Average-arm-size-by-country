@@ -1,0 +1,79 @@
+---
+title: "Average Farm Size by Country"
+author: "David Jackson"
+date: "9/6/2021"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,message = FALSE,error = FALSE)
+library(tidyverse)
+library(dlookr)
+library(scales)
+library(flextable)
+```
+
+## Introduction
+
+"Smallholders produce one-third of the world’s food, less than half of what many headlines claim"
+ It is often claimed that smallholder farmers produce 70% or even 80% of the world’s food. This claim has even been made by the United Nations Food and Agriculture Organization (UN FAO).
+
+## Into (Cont.)
+
+"It has been a linchpin for agricultural and development policies. But it is wrong. Recent studies suggest that this figure is too high: smallholder farmers produce around one-third of the world’s food, less than half of what these headlines claim."
+
+(Source: https://ourworldindata.org/farm-size#average-farm-size-by-country )
+
+
+```{r}
+
+farm_size <- read_csv("./average-farm-size.csv") %>% select(-Code) %>% rename(Country = Entity)
+
+```
+
+## Descriptive Stats For Farm Size
+
+```{r}
+farm_size %>% select(average_farm_size_ha) %>% dlookr::diagnose_numeric() %>% flextable()
+```
+
+## Histogram of Farm Size 
+
+```{r}
+farm_size %>% ggplot() + geom_histogram(aes(x=average_farm_size_ha)) +
+  scale_x_log10() + labs(title = "Histogram by Farm Size in Hectare Arces",  x="Hectare Arces (Logarithmic scale(log10))",y="Number of Farms")
+```
+
+## Farms That Our  Less than One Hectare Arces (for 2000)
+
+```{r}
+farm_size %>% filter(average_farm_size_ha <=1 & Year ==2000) %>%
+  
+  ggplot() +
+  geom_col(aes(x=average_farm_size_ha,y=Country)) +
+  labs(title = "Countries with Farm Size Under 1 HA (2000)",
+       x="Hectare Arces",y="Countries")
+
+```
+
+## Greater  than >1 and <=5 Hectare Arces (for 2000)
+
+```{r}
+farm_size %>% filter((average_farm_size_ha >1 & average_farm_size_ha <=5) & Year ==2000) %>%
+  
+  ggplot() +
+  geom_col(aes(x=reorder(Country,average_farm_size_ha),y=average_farm_size_ha)) +
+  labs(title = "Countries with Farm Size > 1 & <= 5 HA (2000)",
+       y="Hectare Arces",x="Countries") + coord_flip()
+```
+
+##  Farms That Are Greater than >5 and <=10 Hectare Arces (for 2000)
+
+```{r}
+farm_size %>% filter((average_farm_size_ha >5 & average_farm_size_ha <=10) & Year ==2000) %>%
+  
+  ggplot() +
+  geom_col(aes(x=reorder(Country,average_farm_size_ha),y=average_farm_size_ha)) +
+  labs(title = "Countries with Farm Size > 5 & <= 10 HA (2000)",
+       y="Hectare Arces",x="Countries") + coord_flip()
+```
